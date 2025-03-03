@@ -8,17 +8,22 @@ import { OpenAIService } from './services/openai.service';
 
 try {
   const app = express();
-  const port = env.PORT || 3000;
+  const port = Number(env.PORT) || 7002;
 
   // Middleware
   app.use(helmet());
   app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: process.env.FRONTEND_URL ? ['http://localhost:7001', process.env.FRONTEND_URL] : ['http://localhost:7001'],
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
   app.use(express.json());
+
+  // Health check endpoint
+  app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
 
   // Test OpenAI connection
   const openaiService = new OpenAIService();
@@ -26,6 +31,8 @@ try {
     .then(success => {
       if (!success) {
         console.error('❌ OpenAI connection test failed');
+      } else {
+        console.log('✅ OpenAI connection test successful');
       }
     })
     .catch(error => {
@@ -39,11 +46,13 @@ try {
   app.use(errorHandler);
 
   // Start server
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`✅ Server is running on port ${port}`);
+    console.log(`✅ Frontend URL: ${process.env.FRONTEND_URL}`);
+    console.log(`✅ Environment: ${process.env.NODE_ENV}`);
   });
 
 } catch (error) {
-  console.error('Error during server initialization:', error);
+  console.error('❌ Error during server initialization:', error);
   process.exit(1);
 } 

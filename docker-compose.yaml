@@ -17,7 +17,15 @@ services:
     environment:
       - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL:-http://backend:7002}
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
     networks:
       - moodflix-network
 
@@ -39,7 +47,13 @@ services:
       - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
       - TMDB_API_KEY=${TMDB_API_KEY}
       - FRONTEND_URL=${FRONTEND_URL:-http://frontend:7001}
-    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
     networks:
       - moodflix-network
 

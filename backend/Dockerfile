@@ -2,6 +2,9 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Installation des dépendances système nécessaires
+RUN apk add --no-cache wget
+
 # Installation des dépendances globales nécessaires
 RUN npm install -g typescript ts-node
 
@@ -33,5 +36,5 @@ ENV NODE_ENV=production \
     TMDB_API_KEY="" \
     FRONTEND_URL=http://frontend:7001
 
-# Démarrage de l'application
-CMD ["node", "dist/index.js"] 
+# Démarrage de l'application avec plus de logs
+CMD ["sh", "-c", "echo '✅ Starting server...' && node dist/index.js"] 
