@@ -26,15 +26,15 @@ RUN npx tsc --project tsconfig.json
 RUN ls -la dist/
 
 # Exposition du port
-EXPOSE 3000
+EXPOSE 7002
 
 # Variables d'environnement par défaut
 ENV NODE_ENV=production \
-    PORT=3000 \
+    PORT=7002 \
     OPENAI_API_KEY="" \
     OPENWEATHER_API_KEY="" \
     TMDB_API_KEY="" \
     FRONTEND_URL=http://frontend:7001
 
 # Démarrage de l'application avec plus de logs
-CMD ["sh", "-c", "echo '✅ Starting server...' && node dist/index.js"] 
+CMD ["sh", "-c", "echo '🚀 Starting server...' && echo '📝 Environment:' && env && echo '🌐 Network:' && ip addr && node dist/index.js"] 
