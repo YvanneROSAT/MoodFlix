@@ -30,11 +30,16 @@ EXPOSE 7002
 
 # Variables d'environnement par défaut
 ENV NODE_ENV=production \
-    PORT=7002 \
-    OPENAI_API_KEY="" \
-    OPENWEATHER_API_KEY="" \
-    TMDB_API_KEY="" \
-    FRONTEND_URL=http://frontend:7001
+    PORT=7002
 
 # Démarrage de l'application avec plus de logs
-CMD ["sh", "-c", "echo '🚀 Starting server...' && echo '📝 Environment:' && env && echo '🌐 Network:' && ip addr && node dist/index.js"] 
+CMD ["sh", "-c", "\
+    echo '🚀 Starting server...' && \
+    echo '📝 Environment:' && \
+    env | sort && \
+    echo '🌐 Network:' && \
+    ip addr && \
+    echo '🔍 Checking health endpoint...' && \
+    curl -v http://localhost:7002/api/health || true && \
+    echo '⚙️ Starting Node.js server...' && \
+    node dist/index.js"] 

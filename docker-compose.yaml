@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL:-http://localhost:7002}
+        - VITE_BACKEND_API_URL=${SERVICE_URL_BACKEND}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`${SERVICE_FQDN_FRONTEND}`)"
@@ -15,7 +15,7 @@ services:
     ports:
       - "${FRONTEND_PORT:-7001}:80"
     environment:
-      - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL:-http://backend:7002}
+      - VITE_BACKEND_API_URL=${SERVICE_URL_BACKEND}
     depends_on:
       backend:
         condition: service_healthy
@@ -46,7 +46,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
       - TMDB_API_KEY=${TMDB_API_KEY}
-      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:7001}
+      - FRONTEND_URL=${SERVICE_URL_FRONTEND}
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:7002/api/health || exit 1"]
       interval: 30s
