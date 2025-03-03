@@ -2,6 +2,10 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
+# Définition de la variable d'environnement pour le build
+ARG BACKEND_API_URL=http://localhost:2026
+ENV BACKEND_API_URL=${BACKEND_API_URL}
+
 # Copie des fichiers de dépendances
 COPY frontend/package*.json ./
 COPY frontend/vite.config.ts ./
