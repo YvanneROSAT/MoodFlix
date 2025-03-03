@@ -1,8 +1,14 @@
 import axios from 'axios';
 
 // Configure axios defaults
+const url = (url: string) => {
+  if (url.startsWith("http")) {
+    return url;
+  }
+  return "https://" + url;
+}
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_URL,
+  baseURL: url(import.meta.env.VITE_BACKEND_API_URL),
   headers: {
     'Content-Type': 'application/json'
   },
