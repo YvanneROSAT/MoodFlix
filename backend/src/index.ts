@@ -11,7 +11,11 @@ try {
   const port = Number(env.PORT) || 7002;
 
   // Middleware
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: false,
+  }));
+  
   const allowedOrigins = ['http://localhost:7001', 'http://localhost:5173'];
   if (process.env.FRONTEND_URL) {
     allowedOrigins.push(process.env.FRONTEND_URL);
@@ -20,11 +24,29 @@ try {
       allowedOrigins.push(process.env.FRONTEND_URL.replace('http://', 'https://'));
     }
   }
-  
-  app.use(cors({
-    origin: (origin, callback) => {
+
+  // Configuration CORS
+  const corsOptions = {
+    origin: function(origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
       console.log('Incoming request from origin:', origin);
-      if (!origin || allowedOrigins.includes(origin)) {
+      
+      // Permettre les requêtes sans origine (comme les appels API directs)
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      // En développement, accepter localhost
+      if (process.env.NODE_ENV === 'development' && (
+        origin.startsWith('http://localhost:') || 
+        origin.startsWith('http://127.0.0.1:')
+      )) {
+        callback(null, true);
+        return;
+      }
+
+      // En production, vérifier les origines autorisées
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         console.log('Origin not allowed:', origin);
@@ -32,10 +54,15 @@ try {
         callback(new Error('Not allowed by CORS'));
       }
     },
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
+    maxAge: 86400, // Cache préflight pour 24 heures
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  };
+
+  app.use(cors(corsOptions));
   app.use(express.json());
 
   // Health check endpoint
@@ -73,7 +100,7 @@ try {
     console.log(`✅ Health check endpoint: http://localhost:${port}/api/health`);
     console.log('✅ CORS configuration:');
     console.log('   Allowed origins:', allowedOrigins);
-    console.log('   Methods:', ['GET', 'POST']);
+    console.log('   Methods:', ['GET', 'POST', 'OPTIONS']);
     console.log('   Credentials:', true);
   });
 

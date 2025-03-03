@@ -5,19 +5,21 @@ const url = (url: string) => {
   if (url.startsWith("http")) {
     return url;
   }
+  // En développement, utiliser http
+  if (process.env.NODE_ENV === 'development') {
+    return "http://" + url;
+  }
   return "https://" + url;
 }
 
 const instance = axios.create({
   baseURL: url(import.meta.env.VITE_BACKEND_API_URL),
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
   timeout: 10000, // 10 secondes
-  // Désactiver la vérification du certificat en développement
-  httpsAgent: new (require('https').Agent)({  
-    rejectUnauthorized: false
-  })
+  withCredentials: true // Important pour CORS avec credentials
 });
 
 // Add request interceptor for debugging
