@@ -21,8 +21,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(`${SERVICE_FQDN_BACKEND}`) && PathPrefix(`/api`)"
