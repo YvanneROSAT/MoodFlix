@@ -3,7 +3,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Installation des dépendances système nécessaires
-RUN apk add --no-cache wget
+RUN apk add --no-cache wget curl
 
 # Installation des dépendances globales nécessaires
 RUN npm install -g typescript ts-node
