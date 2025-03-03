@@ -11,7 +11,7 @@ services:
       - "traefik.http.routers.frontend.entrypoints=http"
       - "coolify.managed=true"
     ports:
-      - "80:80"
+      - "2025:80"
     depends_on:
       - backend
     environment:
@@ -29,7 +29,7 @@ services:
       - "traefik.http.routers.backend.entrypoints=http"
       - "coolify.managed=true"
     ports:
-      - "3000:3000"
+      - "2026:3000"
     environment:
       - NODE_ENV=production
       - OPENAI_API_KEY=${OPENAI_API_KEY}
