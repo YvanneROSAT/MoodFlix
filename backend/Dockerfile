@@ -3,7 +3,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Installation des dépendances système nécessaires
-RUN apk add --no-cache wget curl
+RUN apk add --no-cache wget
 
 # Installation des dépendances globales nécessaires
 RUN npm install -g typescript ts-node
@@ -19,7 +19,7 @@ RUN npm install
 # Copie des sources
 COPY backend/src ./src
 
-# Build TypeScript avec plus de détails en cas d'erreur
+# Build TypeScript
 RUN npx tsc --project tsconfig.json
 
 # Vérification que le build a bien été créé
@@ -32,14 +32,10 @@ EXPOSE 7002
 ENV NODE_ENV=production \
     PORT=7002
 
-# Démarrage de l'application avec plus de logs
+# Démarrage de l'application avec logs
 CMD ["sh", "-c", "\
     echo '🚀 Starting server...' && \
     echo '📝 Environment:' && \
     env | sort && \
-    echo '🌐 Network:' && \
-    ip addr && \
-    echo '🔍 Checking health endpoint...' && \
-    curl -v http://localhost:7002/api/health || true && \
     echo '⚙️ Starting Node.js server...' && \
     node dist/index.js"] 
