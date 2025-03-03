@@ -2,9 +2,6 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Installation des dépendances système nécessaires
-RUN apk add --no-cache wget
-
 # Installation des dépendances globales nécessaires
 RUN npm install -g typescript ts-node
 
@@ -32,10 +29,5 @@ EXPOSE 7002
 ENV NODE_ENV=production \
     PORT=7002
 
-# Démarrage de l'application avec logs
-CMD ["sh", "-c", "\
-    echo '🚀 Starting server...' && \
-    echo '📝 Environment:' && \
-    env | sort && \
-    echo '⚙️ Starting Node.js server...' && \
-    node dist/index.js"] 
+# Démarrage de l'application
+CMD ["node", "dist/index.js"] 
