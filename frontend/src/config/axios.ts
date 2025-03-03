@@ -7,12 +7,17 @@ const url = (url: string) => {
   }
   return "https://" + url;
 }
+
 const instance = axios.create({
   baseURL: url(import.meta.env.VITE_BACKEND_API_URL),
   headers: {
     'Content-Type': 'application/json'
   },
-  timeout: 10000 // 10 secondes
+  timeout: 10000, // 10 secondes
+  // Désactiver la vérification du certificat en développement
+  httpsAgent: new (require('https').Agent)({  
+    rejectUnauthorized: false
+  })
 });
 
 // Add request interceptor for debugging

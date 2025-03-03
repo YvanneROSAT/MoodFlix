@@ -15,10 +15,23 @@ try {
   const allowedOrigins = ['http://localhost:7001', 'http://localhost:5173'];
   if (process.env.FRONTEND_URL) {
     allowedOrigins.push(process.env.FRONTEND_URL);
+    // Ajout de la version HTTPS de l'URL frontend
+    if (process.env.FRONTEND_URL.startsWith('http://')) {
+      allowedOrigins.push(process.env.FRONTEND_URL.replace('http://', 'https://'));
+    }
   }
   
   app.use(cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      console.log('Incoming request from origin:', origin);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log('Origin not allowed:', origin);
+        console.log('Allowed origins:', allowedOrigins);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -27,6 +40,7 @@ try {
 
   // Health check endpoint
   app.get('/api/health', (req, res) => {
+    console.log('Health check request received');
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
