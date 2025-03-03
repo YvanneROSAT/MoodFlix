@@ -6,16 +6,15 @@ WORKDIR /app
 RUN npm install -g typescript ts-node
 
 # Copie des fichiers de configuration
-COPY backend/package*.json ./
-COPY backend/tsconfig.json ./
-COPY backend/.env.example ./.env.example
-COPY backend/.env ./.env
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY .env.example ./.env
 
 # Installation des dépendances
 RUN npm install
 
 # Copie des sources
-COPY backend/src ./src
+COPY src ./src
 
 # Build TypeScript
 RUN npx tsc --project tsconfig.json

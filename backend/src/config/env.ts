@@ -4,13 +4,8 @@ import { config } from 'dotenv-safe';
 // Initialize environment configuration
 const initializeEnv = () => {
   try {
-    const envPath = path.resolve(process.cwd(), '.env');
-    const examplePath = path.resolve(process.cwd(), '.env.example');
-    
     // En production, on utilise les variables d'environnement directement
     if (process.env.NODE_ENV === 'production') {
-      // On ne charge pas le fichier .env en production
-      // Les variables sont injectées par Docker/Coolify
       return {
         NODE_ENV: process.env.NODE_ENV || 'production',
         PORT: process.env.PORT || '7002',
@@ -25,8 +20,8 @@ const initializeEnv = () => {
     
     // En développement, on charge le fichier .env
     config({
-      path: envPath,
-      example: examplePath,
+      path: path.resolve(process.cwd(), '.env'),
+      example: path.resolve(process.cwd(), '.env.example'),
       allowEmptyValues: false,
     });
     
