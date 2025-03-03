@@ -55,6 +55,13 @@
                   ></textarea>
                 </div>
                 
+                <button
+                  @click="showRules"
+                  class="ml-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                >
+                  📜 Règles
+                </button>
+                
                 <Button
                   type="submit"
                   :loading="loading"
@@ -114,33 +121,42 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Error Message -->
-      <div
-        v-if="error"
-        class="fixed bottom-2 sm:bottom-4 right-2 sm:right-4 left-2 sm:left-auto max-w-md bg-[#333333] border-l-4 border-[#E50914] p-3 sm:p-4 rounded-md shadow-lg"
-      >
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-[#E50914]" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-            </svg>
+    <!-- Error Message Modal - Déplacé en dehors des sections principales -->
+    <Transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="transform translate-y-full opacity-0"
+      enter-to-class="transform translate-y-0 opacity-100"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="transform translate-y-0 opacity-100"
+      leave-to-class="transform translate-y-full opacity-0"
+    >
+      <div v-if="error" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-md z-50">
+        <div class="mx-4 bg-black/90 border-l-4 border-[#E50914] p-4 rounded-md shadow-lg backdrop-blur-sm">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-[#E50914]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div class="ml-3 flex-1">
+              <p class="text-[#E5E5E5] text-sm font-medium">{{ error }}</p>
+              <p v-if="theme" class="mt-1 text-sm text-[#E5E5E5]/80">{{ theme }}</p>
+              <p v-if="mood" class="text-sm text-[#E5E5E5]/60">{{ mood }}</p>
+            </div>
+            <button @click="error = ''" class="ml-4 text-[#E5E5E5]/60 hover:text-[#E5E5E5]">
+              <span class="sr-only">Fermer</span>
+              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
           </div>
-          <div class="ml-3">
-            <p class="text-white text-sm">{{ error }}</p>
-          </div>
-          <button
-            @click="error = ''"
-            class="ml-auto text-[#E5E5E5] hover:text-white"
-          >
-            <span class="sr-only">Fermer</span>
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
-          </button>
         </div>
       </div>
-    </div>
+    </Transition>
+
+    <RulesModal ref="rulesModal" />
   </div>
 </template>
 
@@ -150,6 +166,7 @@ import axios from './config/axios'
 import Card, { CardHeader, CardTitle, CardDescription, CardContent } from './components/ui/card.vue'
 import Input from './components/ui/input.vue'
 import Button from './components/ui/button.vue'
+import RulesModal from './components/RulesModal.vue'
 import './styles/global.css'
 
 interface MovieRecommendation {
@@ -174,6 +191,7 @@ const recommendations = ref<MovieRecommendation[]>([])
 const theme = ref('')
 const mood = ref('')
 const showSearchForm = ref(true)
+const rulesModal = ref()
 
 async function getRecommendations() {
   if (!city.value.trim()) {
@@ -185,25 +203,61 @@ async function getRecommendations() {
   loading.value = true
   
   try {
+    console.log('Envoi de la requête...')
     const response = await axios.post('/api/movies/recommendations', {
       city: city.value.trim(),
       userContext: userContext.value.trim() || undefined
     })
+    console.log('Réponse reçue:', response.data)
 
-    if (response.data) {
-      recommendations.value = response.data.recommendations
+    // Détection d'une réponse de sécurité (recommendations vide avec theme et mood spécifiques)
+    if (response.data.recommendations?.length === 0 && 
+        response.data.theme === 'Sécurité avant tout' && 
+        response.data.mood === 'Taquin mais ferme') {
+      console.log('Message de sécurité détecté')
+      error.value = "Hop hop hop ! On ne regarde pas sous le capot ! 🚗 Mais j'apprécie ta curiosité ! 😉"
       theme.value = response.data.theme
       mood.value = response.data.mood
-      showSearchForm.value = false // Cache le formulaire après une recherche réussie
+      recommendations.value = []
+      showSearchForm.value = true
+      return
+    }
+
+    // Si la réponse contient des recommandations valides
+    if (Array.isArray(response.data.recommendations)) {
+      console.log('Recommandations reçues')
+      if (response.data.recommendations.length > 0) {
+        error.value = ''
+        recommendations.value = response.data.recommendations
+        theme.value = response.data.theme
+        mood.value = response.data.mood
+        showSearchForm.value = false
+      } else {
+        error.value = "Désolé, nous n'avons pas trouvé de recommandations pour le moment."
+        recommendations.value = []
+      }
+    } else {
+      console.log('Format de réponse invalide')
+      throw new Error('Format de réponse invalide')
     }
   } catch (err: any) {
-    error.value = err.response?.data?.message || err.message || 'Une erreur est survenue lors de la récupération des recommandations'
+    console.error('Erreur:', err)
+    error.value = err.response?.data?.message || err.message || 'Une erreur est survenue'
     recommendations.value = []
     theme.value = ''
     mood.value = ''
   } finally {
     loading.value = false
   }
+}
+
+// Ajout d'un watcher pour déboguer l'état de error
+watch(error, (newValue) => {
+  console.log('Valeur de error changée:', newValue)
+})
+
+const showRules = () => {
+  rulesModal.value?.openModal()
 }
 </script>
 
@@ -283,6 +337,22 @@ async function getRecommendations() {
   .netflix-card:hover .card-content {
     opacity: 1;
     visibility: visible;
+  }
+}
+
+/* Animation pour le message d'erreur */
+.fixed {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
   }
 }
 </style> 
