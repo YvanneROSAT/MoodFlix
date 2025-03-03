@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configure axios defaults
 const instance = axios.create({
-  baseURL: import.meta.env.BACKEND_API_URL,
+  baseURL: import.meta.env.VITE_BACKEND_API_URL,
   headers: {
     'Content-Type': 'application/json'
   },
@@ -15,7 +15,8 @@ instance.interceptors.request.use(
     console.log('Making request:', {
       url: config.url,
       method: config.method,
-      data: config.data
+      data: config.data,
+      baseURL: config.baseURL
     });
     return config;
   },
@@ -37,7 +38,8 @@ instance.interceptors.response.use(
   error => {
     console.error('Response error:', {
       message: error.message,
-      response: error.response?.data
+      response: error.response?.data,
+      status: error.response?.status
     });
 
     if (error.response) {

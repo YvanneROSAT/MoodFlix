@@ -8,7 +8,7 @@ RUN npm install -g typescript ts-node
 # Copie des fichiers de configuration
 COPY backend/package*.json ./
 COPY backend/tsconfig.json ./
-COPY backend/.env.example ./
+COPY backend/.env.example ./.env
 
 # Installation des dépendances
 RUN npm install
@@ -24,6 +24,14 @@ RUN ls -la dist/
 
 # Exposition du port
 EXPOSE 3000
+
+# Variables d'environnement par défaut
+ENV NODE_ENV=production \
+    PORT=2026 \
+    OPENAI_API_KEY="" \
+    OPENWEATHER_API_KEY="" \
+    TMDB_API_KEY="" \
+    FRONTEND_URL=http://localhost:2025
 
 # Démarrage de l'application
 CMD ["node", "dist/index.js"] 

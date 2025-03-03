@@ -62,7 +62,7 @@ export class WeatherService {
       console.log('=== Fin getWeatherByCity - Succès ===');
       return weatherData;
 
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('=== Erreur dans getWeatherByCity ===');
       
       // Type guard pour vérifier si c'est une erreur avec des propriétés
