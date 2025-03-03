@@ -14,7 +14,6 @@ RUN npm install
 
 # Copie du reste des fichiers
 COPY frontend/src ./src
-COPY frontend/public ./public
 COPY frontend/index.html ./
 
 # Build de l'application
