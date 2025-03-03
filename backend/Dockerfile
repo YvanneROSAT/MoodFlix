@@ -31,7 +31,7 @@ ENV NODE_ENV=production \
     OPENAI_API_KEY="" \
     OPENWEATHER_API_KEY="" \
     TMDB_API_KEY="" \
-    FRONTEND_URL=http://frontend:80
+    FRONTEND_URL=http://frontend:7001
 
 # Démarrage de l'application
 CMD ["node", "dist/index.js"] 

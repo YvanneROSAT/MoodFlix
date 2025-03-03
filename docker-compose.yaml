@@ -6,16 +6,16 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL:-http://localhost:3000}
+        - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL:-http://localhost:7002}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`${SERVICE_FQDN_FRONTEND}`)"
       - "traefik.http.routers.frontend.entrypoints=http"
       - "coolify.managed=true"
     ports:
-      - "${FRONTEND_PORT:-80}:80"
+      - "${FRONTEND_PORT:-7001}:80"
     environment:
-      - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL:-http://backend:3000}
+      - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL:-http://backend:7002}
     depends_on:
       - backend
     networks:
@@ -31,14 +31,14 @@ services:
       - "traefik.http.routers.backend.entrypoints=http"
       - "coolify.managed=true"
     ports:
-      - "${BACKEND_PORT:-3000}:3000"
+      - "${BACKEND_PORT:-7002}:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
       - TMDB_API_KEY=${TMDB_API_KEY}
-      - FRONTEND_URL=${FRONTEND_URL:-http://frontend:80}
+      - FRONTEND_URL=${FRONTEND_URL:-http://frontend:7001}
     restart: always
     networks:
       - moodflix-network
