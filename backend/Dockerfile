@@ -27,11 +27,11 @@ EXPOSE 3000
 
 # Variables d'environnement par défaut
 ENV NODE_ENV=production \
-    PORT=2026 \
+    PORT=3000 \
     OPENAI_API_KEY="" \
     OPENWEATHER_API_KEY="" \
     TMDB_API_KEY="" \
-    FRONTEND_URL=http://localhost:2025
+    FRONTEND_URL=http://frontend:80
 
 # Démarrage de l'application
 CMD ["node", "dist/index.js"] 
