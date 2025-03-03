@@ -12,8 +12,13 @@ try {
 
   // Middleware
   app.use(helmet());
+  const allowedOrigins = ['http://localhost:7001', 'http://localhost:5173'];
+  if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+  }
+  
   app.use(cors({
-    origin: process.env.FRONTEND_URL ? ['http://localhost:7001', process.env.FRONTEND_URL] : ['http://localhost:7001'],
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
