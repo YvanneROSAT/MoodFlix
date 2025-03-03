@@ -12,10 +12,10 @@ services:
       - "coolify.managed=true"
     ports:
       - "2025:80"
+    environment:
+      - VITE_API_URL=http://backend:2026
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=${SERVICE_URL_BACKEND}
     networks:
       - moodflix-network
 
@@ -36,7 +36,7 @@ services:
       - TMDB_API_KEY=${TMDB_API_KEY}
       - WEATHER_API_KEY=${WEATHER_API_KEY}
       - PORT=3000
-      - FRONTEND_URL=${SERVICE_URL_FRONTEND}
+      - FRONTEND_URL=http://frontend:2025
     restart: always
     networks:
       - moodflix-network

@@ -2,18 +2,27 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copie des fichiers de dépendances
-COPY package*.json ./
-COPY tsconfig.json ./
+# Installation des dépendances globales nécessaires
+RUN npm install -g typescript
+
+# Copie des fichiers de configuration
+COPY backend/package*.json ./
+COPY backend/tsconfig.json ./
 
 # Installation des dépendances
 RUN npm install
 
-# Copie du reste des fichiers
-COPY src ./src
+# Copie des sources
+COPY backend/src ./src
+
+# Build TypeScript
+RUN tsc
+
+# Vérification que le build a bien été créé
+RUN ls -la dist/
 
 # Exposition du port
 EXPOSE 3000
 
 # Démarrage de l'application
-CMD ["npm", "start"] 
+CMD ["node", "dist/index.js"] 
