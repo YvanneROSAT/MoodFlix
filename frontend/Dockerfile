@@ -4,12 +4,18 @@ WORKDIR /app
 
 # Copie des fichiers de dépendances
 COPY package*.json ./
+COPY vite.config.ts ./
+COPY tsconfig.json ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
 
 # Installation des dépendances
 RUN npm install
 
 # Copie du reste des fichiers
-COPY . .
+COPY src ./src
+COPY public ./public
+COPY index.html ./
 
 # Build de l'application
 RUN npm run build
