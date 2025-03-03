@@ -13,8 +13,7 @@ services:
     ports:
       - "2025:80"
     environment:
-      - VITE_API_URL=http://backend:2026
-      - BACKEND_API_URL=${BACKEND_API_URL}
+      - VITE_API_URL=/api
     depends_on:
       - backend
     networks:
@@ -37,8 +36,7 @@ services:
       - TMDB_API_KEY=${TMDB_API_KEY}
       - WEATHER_API_KEY=${WEATHER_API_KEY}
       - PORT=3000
-      - FRONTEND_URL=http://frontend:2025
-      - BACKEND_API_URL=${BACKEND_API_URL}
+      - FRONTEND_URL=https://${SERVICE_FQDN_FRONTEND}
     restart: always
     networks:
       - moodflix-network
