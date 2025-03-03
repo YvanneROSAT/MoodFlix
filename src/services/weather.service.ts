@@ -62,21 +62,28 @@ export class WeatherService {
       console.log('=== Fin getWeatherByCity - Succès ===');
       return weatherData;
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('=== Erreur dans getWeatherByCity ===');
-      console.error('Détails de l\'erreur:', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-        isAxiosError: axios.isAxiosError(error),
-        response: error.response ? {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data
-        } : null
-      });
       
+      // Type guard pour vérifier si c'est une erreur avec des propriétés
+      if (error instanceof Error) {
+        console.error('Détails de l\'erreur:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Vérification spécifique pour les erreurs Axios
       if (axios.isAxiosError(error)) {
+        console.error('Détails de l\'erreur Axios:', {
+          response: error.response ? {
+            status: error.response.status,
+            statusText: error.response.statusText,
+            data: error.response.data
+          } : null
+        });
+
         if (error.response?.status === 404) {
           throw new AppError('Ville non trouvée. Veuillez vérifier l\'orthographe.', 404);
         }

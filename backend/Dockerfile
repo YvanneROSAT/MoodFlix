@@ -3,20 +3,20 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Installation des dépendances globales nécessaires
-RUN npm install -g typescript
+RUN npm install -g typescript ts-node
 
 # Copie des fichiers de configuration
-COPY package*.json ./
-COPY tsconfig.json ./
+COPY backend/package*.json ./
+COPY backend/tsconfig.json ./
 
 # Installation des dépendances
 RUN npm install
 
 # Copie des sources
-COPY src ./src
+COPY backend/src ./src
 
-# Build TypeScript
-RUN tsc
+# Build TypeScript avec plus de détails en cas d'erreur
+RUN npx tsc --project tsconfig.json
 
 # Vérification que le build a bien été créé
 RUN ls -la dist/

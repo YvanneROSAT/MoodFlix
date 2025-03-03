@@ -15,7 +15,7 @@ export class RecommendationController {
     this.tmdbService = new TMDBService();
   }
 
-  async getRecommendations = async (
+  getRecommendations = async (
     req: Request,
     res: Response,
     next: NextFunction
