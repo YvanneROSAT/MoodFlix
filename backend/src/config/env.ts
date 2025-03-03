@@ -7,11 +7,19 @@ const initializeEnv = () => {
     const envPath = path.resolve(process.cwd(), '.env');
     const examplePath = path.resolve(process.cwd(), '.env.example');
     
-    config({
-      path: envPath,
-      example: examplePath,
-      allowEmptyValues: false,
-    });
+    // En production, on ne vérifie pas le fichier .env.example
+    if (process.env.NODE_ENV === 'production') {
+      config({
+        path: envPath,
+        allowEmptyValues: true,
+      });
+    } else {
+      config({
+        path: envPath,
+        example: examplePath,
+        allowEmptyValues: false,
+      });
+    }
     
     // Validate required environment variables
     const requiredEnvVars = {

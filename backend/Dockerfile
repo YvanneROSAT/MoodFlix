@@ -8,7 +8,7 @@ RUN npm install -g typescript ts-node
 # Copie des fichiers de configuration
 COPY backend/package*.json ./
 COPY backend/tsconfig.json ./
-COPY backend/.env.example ./.env
+COPY backend/.env.example ./.env.example
 
 # Installation des dépendances
 RUN npm install
