@@ -48,7 +48,7 @@ services:
       - TMDB_API_KEY=${TMDB_API_KEY}
       - FRONTEND_URL=${FRONTEND_URL:-http://frontend:7001}
     healthcheck:
-      test: ["CMD-SHELL", "wget --spider -v http://localhost:7002/api/health 2>&1 | grep 'HTTP/1.1 200' || exit 1"]
+      test: ["CMD-SHELL", "wget --spider -v http://localhost:3000/api/health 2>&1 | grep 'HTTP/1.1 200' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
