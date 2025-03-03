@@ -52,9 +52,15 @@ try {
 
   // Start server
   app.listen(port, '0.0.0.0', () => {
+    console.log('🚀 Server initialization...');
     console.log(`✅ Server is running on port ${port}`);
     console.log(`✅ Frontend URL: ${process.env.FRONTEND_URL}`);
     console.log(`✅ Environment: ${process.env.NODE_ENV}`);
+    console.log(`✅ Health check endpoint: http://localhost:${port}/api/health`);
+    console.log('✅ CORS configuration:');
+    console.log('   Allowed origins:', allowedOrigins);
+    console.log('   Methods:', ['GET', 'POST']);
+    console.log('   Credentials:', true);
   });
 
 } catch (error) {
