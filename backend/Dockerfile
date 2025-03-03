@@ -9,6 +9,7 @@ RUN npm install -g typescript ts-node
 COPY backend/package*.json ./
 COPY backend/tsconfig.json ./
 COPY backend/.env.example ./.env.example
+COPY backend/.env ./.env
 
 # Installation des dépendances
 RUN npm install
@@ -27,7 +28,9 @@ EXPOSE 7002
 
 # Variables d'environnement par défaut
 ENV NODE_ENV=production \
-    PORT=7002
+    PORT=7002 \
+    BACKEND_PORT=7002 \
+    FRONTEND_PORT=7001
 
 # Démarrage de l'application
 CMD ["node", "dist/index.js"] 
