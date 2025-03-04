@@ -28,8 +28,9 @@ services:
       dockerfile: backend/Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${SERVICE_FQDN_BACKEND}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=http"
+      - "traefik.http.services.backend.loadbalancer.server.port=7002"
       - "coolify.managed=true"
     ports:
       - "${BACKEND_PORT:-7002}:7002"
