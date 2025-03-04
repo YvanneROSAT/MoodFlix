@@ -11,7 +11,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`${SERVICE_FQDN_FRONTEND}`)"
       - "traefik.http.routers.frontend.entrypoints=http"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
       - "coolify.managed=true"
     ports:
       - "${FRONTEND_PORT:-7001}:80"
@@ -29,11 +28,9 @@ services:
       dockerfile: backend/Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${SERVICE_FQDN_FRONTEND}`, `${SERVICE_FQDN_BACKEND}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.rule=Host(`${SERVICE_FQDN_FRONTEND}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=http"
       - "traefik.http.services.backend.loadbalancer.server.port=7002"
-      - "traefik.http.middlewares.backend-strip.stripprefix.prefixes=/api"
-      - "traefik.http.routers.backend.middlewares=backend-strip"
       - "coolify.managed=true"
     ports:
       - "${BACKEND_PORT:-7002}:7002"
