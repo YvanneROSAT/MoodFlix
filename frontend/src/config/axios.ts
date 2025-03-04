@@ -15,8 +15,8 @@ const instance = axios.create({
 // Add request interceptor for debugging
 instance.interceptors.request.use(
   config => {
-    // En prod, on s'assure que l'URL commence par /api
-    if (import.meta.env.PROD && !config.url?.startsWith('/api')) {
+    // En prod, on s'assure que l'URL commence par /api seulement si baseURL ne le contient pas déjà
+    if (import.meta.env.PROD && !config.baseURL?.includes('/api') && !config.url?.startsWith('/api')) {
       config.url = `/api${config.url || ''}`;
     }
     
