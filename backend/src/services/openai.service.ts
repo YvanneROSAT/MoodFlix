@@ -57,7 +57,9 @@ export class OpenAIService {
       throw new AppError('OpenAI API key is required', 500);
     }
     this.openai = new OpenAI({
-      apiKey: env.OPENAI_API_KEY
+      apiKey: env.OPENAI_API_KEY,
+      timeout: 25000, // 25 secondes de timeout
+      maxRetries: 2
     });
   }
 
