@@ -35,7 +35,16 @@ try {
   // Health check endpoint
   app.get('/api/health', (req, res) => {
     console.log('Health check request received');
-    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.status(200).json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      services: {
+        openai: true,
+        openweather: true,
+        tmdb: true
+      }
+    });
   });
 
   // Test OpenAI connection
