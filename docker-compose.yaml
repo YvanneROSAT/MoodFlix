@@ -28,14 +28,7 @@ services:
       dockerfile: backend/Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${SERVICE_FQDN_BACKEND}`)"
-      - "traefik.http.middlewares.backend-strip.stripprefix.prefixes=/api"
-      - "traefik.http.routers.backend.middlewares=backend-strip@docker"
-      - "traefik.http.services.backend.loadbalancer.server.port=7002"
-      - "traefik.http.services.backend.loadbalancer.server.scheme=http"
-      - "traefik.http.services.backend.loadbalancer.serverstransport.forwardingtimeouts.dialtimeout=30s"
-      - "traefik.http.services.backend.loadbalancer.serverstransport.forwardingtimeouts.idleconntimeout=60s"
-      - "traefik.http.services.backend.loadbalancer.serverstransport.forwardingtimeouts.responseheadertimeout=30s"
+      - "traefik.http.routers.backend.rule=Host(`${SERVICE_FQDN_BACKEND}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=http"
       - "coolify.managed=true"
     ports:
