@@ -26,6 +26,12 @@ try {
 
   app.use(express.json());
 
+  // Middleware pour logger toutes les requêtes
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path} - Body:`, req.body);
+    next();
+  });
+
   // Health check endpoint
   app.get('/api/health', (req, res) => {
     console.log('Health check request received');
@@ -46,8 +52,13 @@ try {
       console.error('❌ Error testing OpenAI connection:', error);
     });
 
-  // Routes
+  // Routes - Assurez-vous que toutes les routes commencent par /api
   app.use('/api/movies', movieRoutes);
+
+  // Route par défaut pour /api
+  app.get('/api', (req, res) => {
+    res.json({ message: 'API is running' });
+  });
 
   // Error handling
   app.use(errorHandler);
