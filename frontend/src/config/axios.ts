@@ -1,25 +1,12 @@
 import axios from 'axios';
 
-// Configure axios defaults
-const url = (url: string) => {
-  if (url.startsWith("http")) {
-    return url;
-  }
-  // En développement, utiliser http
-  if (process.env.NODE_ENV === 'development') {
-    return "http://" + url;
-  }
-  return "https://" + url;
-}
-
 const instance = axios.create({
-  baseURL: url(import.meta.env.VITE_BACKEND_API_URL),
+  baseURL: import.meta.env.VITE_BACKEND_API_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
-  timeout: 10000, // 10 secondes
-  withCredentials: true // Important pour CORS avec credentials
+  timeout: 10000
 });
 
 // Add request interceptor for debugging
@@ -49,26 +36,19 @@ instance.interceptors.response.use(
     return response;
   },
   error => {
-    console.error('Response error:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status
-    });
+    console.error('Response error:', error);
 
     if (error.response) {
-      // Le serveur a répondu avec un code d'erreur
       return Promise.reject({
         message: error.response.data.message || 'Une erreur est survenue',
         status: error.response.status
       });
     } else if (error.request) {
-      // La requête a été faite mais pas de réponse
       return Promise.reject({
         message: 'Le serveur ne répond pas. Veuillez réessayer plus tard.',
         status: 503
       });
     } else {
-      // Erreur lors de la configuration de la requête
       return Promise.reject({
         message: 'Erreur de configuration de la requête',
         status: 500
