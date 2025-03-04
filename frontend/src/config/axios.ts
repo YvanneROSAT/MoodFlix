@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// En production, on veut juste ajouter /api au début des requêtes
-const baseURL = import.meta.env.PROD ? '/api' : import.meta.env.VITE_BACKEND_API_URL;
+// En production et en développement, on veut ajouter /api au début des requêtes
+const baseURL = import.meta.env.PROD ? '/api' : `${import.meta.env.VITE_BACKEND_API_URL}/api`;
 
 const instance = axios.create({
   baseURL,
@@ -15,7 +15,6 @@ const instance = axios.create({
 // Add request interceptor for debugging
 instance.interceptors.request.use(
   config => {
-    // Suppression de la logique d'ajout de /api ici car géré par baseURL
     console.log('Making request:', {
       url: config.url,
       method: config.method,
