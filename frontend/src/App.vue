@@ -204,7 +204,7 @@ async function getRecommendations() {
   
   try {
     console.log('Envoi de la requête...')
-    const response = await axios.post('/api/movies/recommendations', {
+    const response = await axios.post('/movies/recommendations', {
       city: city.value.trim(),
       userContext: userContext.value.trim() || undefined
     })
