@@ -53,6 +53,10 @@ services:
       - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
       - TMDB_API_KEY=${TMDB_API_KEY}
       - FRONTEND_URL=${SERVICE_URL_FRONTEND}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - REDIS_TTL=${REDIS_TTL:-3600}
+    depends_on:
+      - redis
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7002/api/health"]
       interval: 10s
@@ -62,6 +66,27 @@ services:
     networks:
       - moodflix-network
 
+  redis:
+    image: redis:alpine
+    labels:
+      - "coolify.managed=true"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - moodflix-network
+
 networks:
   moodflix-network:
-    driver: bridge 
+    driver: bridge
+
+volumes:
+  redis-data: 

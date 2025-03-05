@@ -5,10 +5,28 @@ import { env } from './config/env';
 import { movieRoutes } from './routes/movie.routes';
 import { errorHandler } from './middleware/error.middleware';
 import { OpenAIService } from './services/openai.service';
+import { RedisService } from './services/redis.service';
 
 try {
   const app = express();
   const port = Number(env.PORT) || 7002;
+
+  // Initialize Redis
+  const redisService = new RedisService();
+  redisService.connect()
+    .then(success => {
+      if (!success) {
+        console.error('❌ Redis connection failed');
+      } else {
+        console.log('✅ Redis connection successful');
+      }
+    })
+    .catch(error => {
+      console.error('❌ Error connecting to Redis:', error);
+    });
+
+  // Make Redis service available globally
+  app.locals.redis = redisService;
 
   // Middleware
   app.use(helmet({
@@ -42,7 +60,8 @@ try {
       services: {
         openai: true,
         openweather: true,
-        tmdb: true
+        tmdb: true,
+        redis: redisService.isReady()
       }
     });
   });
@@ -79,6 +98,13 @@ try {
     console.log(`✅ Frontend URL: ${process.env.FRONTEND_URL}`);
     console.log(`✅ Environment: ${process.env.NODE_ENV}`);
     console.log(`✅ Health check endpoint: http://localhost:${port}/api/health`);
+  });
+
+  // Graceful shutdown
+  process.on('SIGINT', async () => {
+    console.log('Shutting down server...');
+    await redisService.disconnect();
+    process.exit(0);
   });
 
 } catch (error) {

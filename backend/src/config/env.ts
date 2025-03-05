@@ -15,6 +15,8 @@ const initializeEnv = () => {
         OPENWEATHER_API_KEY: process.env.OPENWEATHER_API_KEY,
         TMDB_API_KEY: process.env.TMDB_API_KEY,
         FRONTEND_URL: process.env.FRONTEND_URL,
+        REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
+        REDIS_TTL: process.env.REDIS_TTL || '3600',
       };
     }
     
@@ -34,6 +36,8 @@ const initializeEnv = () => {
       OPENWEATHER_API_KEY: process.env.OPENWEATHER_API_KEY,
       TMDB_API_KEY: process.env.TMDB_API_KEY,
       FRONTEND_URL: process.env.FRONTEND_URL,
+      REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
+      REDIS_TTL: process.env.REDIS_TTL || '3600',
     };
   } catch (error) {
     console.error('Error loading environment variables:', error);
