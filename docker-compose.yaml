@@ -71,7 +71,7 @@ services:
     labels:
       - "coolify.managed=true"
     ports:
-      - "6379:6379"
+      - "6380:6380"
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
