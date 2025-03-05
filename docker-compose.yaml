@@ -11,13 +11,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`${SERVICE_FQDN_FRONTEND}`)"
       - "traefik.http.routers.frontend.entrypoints=http"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.services.frontend.loadbalancer.server"
       - "traefik.http.services.frontend.loadbalancer.healthcheck.path=/health"
       - "traefik.http.services.frontend.loadbalancer.healthcheck.interval=10s"
       - "traefik.http.services.frontend.loadbalancer.healthcheck.timeout=5s"
       - "coolify.managed=true"
-    ports:
-      - "${FRONTEND_PORT:-7001}:80"
     environment:
       - VITE_BACKEND_API_URL=${SERVICE_URL_BACKEND}
     depends_on:
@@ -39,16 +37,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=http"
-      - "traefik.http.services.backend.loadbalancer.server.port=7002"
+      - "traefik.http.services.backend.loadbalancer.server"
       - "traefik.http.services.backend.loadbalancer.healthcheck.path=/api/health"
       - "traefik.http.services.frontend.loadbalancer.healthcheck.interval=10s"
       - "traefik.http.services.frontend.loadbalancer.healthcheck.timeout=5s"
       - "coolify.managed=true"
-    ports:
-      - "${BACKEND_PORT:-7002}:7002"
     environment:
       - NODE_ENV=production
-      - PORT=7002
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
       - TMDB_API_KEY=${TMDB_API_KEY}
@@ -70,8 +65,6 @@ services:
     image: redis:alpine
     labels:
       - "coolify.managed=true"
-    ports:
-      - "6380:6380"
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
