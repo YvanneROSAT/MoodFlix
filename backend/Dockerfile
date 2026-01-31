@@ -2,15 +2,11 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Installation des dépendances globales nécessaires
-RUN npm install -g typescript ts-node
-
 # Copie des fichiers de configuration
 COPY backend/package*.json ./
 COPY backend/tsconfig.json ./
-COPY backend/.env.example ./.env
 
-# Installation des dépendances
+# Installation des dépendances (inclut devDeps pour le build TypeScript)
 RUN npm install
 
 # Copie des sources
@@ -19,17 +15,18 @@ COPY backend/src ./src
 # Build TypeScript
 RUN npx tsc --project tsconfig.json
 
+# Suppression des devDependencies pour alléger l'image
+RUN npm prune --production
+
 # Vérification que le build a bien été créé
 RUN ls -la dist/
 
-# Exposition du port
-EXPOSE 7002
-
 # Variables d'environnement par défaut
 ENV NODE_ENV=production \
-    PORT=7002 \
-    BACKEND_PORT=7002 \
-    FRONTEND_PORT=7001
+    PORT=7002
+
+# Exposition du port (Railway injecte $PORT dynamiquement)
+EXPOSE ${PORT:-7002}
 
 # Démarrage de l'application
-CMD ["node", "dist/index.js"] 
+CMD ["node", "dist/index.js"]

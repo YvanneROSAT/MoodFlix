@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// En production et en développement, on veut ajouter /api au début des requêtes
-const baseURL = import.meta.env.PROD ? '/api' : `${import.meta.env.VITE_BACKEND_API_URL}/api`;
+// VITE_BACKEND_API_URL pointe vers le domaine du backend (ex: https://backend.up.railway.app en prod, http://localhost:7002 en dev)
+const baseURL = `${import.meta.env.VITE_BACKEND_API_URL || ''}/api`;
 
 const instance = axios.create({
   baseURL,
